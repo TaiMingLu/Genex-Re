@@ -12,6 +12,9 @@ Equation (3) is based on the original POMDP formulation by [Kaelbling et al., 19
 
 Equation (4) is derived by replacing the traditional physical exploration components of the POMDP belief update with an imaginative exploration mechanism driven by a diffusion-based generative model parameterized by \( \theta \). In the standard belief update (Equation 3), the agent transitions between states \( s^t \) using the transition model \( T(s^{t+1} | s^t, a^t) \) and incorporates actual observations \( O(o^{t+1} | s^{t+1}, a^t) \), which requires summing over all possible prior states to account for uncertainty. By contrast, in imagination-driven belief revision, the agent remains in the current state \( s^t \) and employs the diffusion model \( p_{\hat{\theta}}(\hat{o}^{i+1} | \hat{o}^i, \hat{a}^i) \) to generate a sequence of hypothetical observations based on imagined actions \( \hat{a}^i \). This substitution eliminates the need for state transitions and the associated summations because the physical state does not change; instead, the belief is updated multiplicatively by the probabilities of the imagined observations across the imaginative steps \( I \). As a result, the belief \( \hat{b}^t(s^t) \) is directly refined by the product of these generated observation probabilities applied to the initial belief \( b^t(s^t) \), leading to Equation (4). This approach leverages the generative capabilities of the diffusion model \( \theta \) to simulate potential observations, enabling the agent to perform instantaneous and iterative belief revisions without altering the underlying state, thereby enhancing the efficiency and flexibility of the belief update process.
 
+> Although SCL is highlighted as a contribution, its effectiveness is not demonstrated in the experimental results.
+
+Running
 
 
 > The use of latent diffusion with temporal attention is not a novel architecture.
