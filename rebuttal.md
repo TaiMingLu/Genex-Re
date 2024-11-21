@@ -1,10 +1,8 @@
-## Reviewer GPuR
+Reviewer GPuR
 
-We appreciate the detailed feedback from the reviewer. We would like to add additional clarification.
+We appreciate the feedback from the reviewer. We would like to add additional clarification.
 
-
-
-### Weakness
+## Weakness
 
 > There are some errors in the mathematical formulations presented, particularly in equations (3) and (4), which are confusing.
 
@@ -14,7 +12,16 @@ Equation (4) is derived by replacing the traditional physical exploration compon
 
 > Although SCL is highlighted as a contribution, its effectiveness is not demonstrated in the experimental results.
 
-Running
+We compare the performance of SVD trained on Genex-DB against Genex trained using SCL on the same dataset, on common evaluation metrics:
+
+| Model          | Input     | FVD ↓  | MSE ↓  | LPIPS ↓ | PSNR ↑  | SSIM ↑  |
+|----------------|-----------|--------|--------|---------|---------|---------|
+| SVD           | panorama  | 81.9   | 0.05   | 0.05   | 29.4    | 0.91  |
+| **Genex**     | panorama  | **69.5** | **0.04** | **0.03** | **30.2** | **0.94** |
+
+The difference in metrics is clear but not significant: Although edge inconsistencies are highly visible to humans, the metrics fail to fully capture such artifacts, as their impact is primarily localized to the edges of the image.
+
+However, for exploration cycle consistency, the performance degradation is significant when the number of rotations increases.
 
 
 > The use of latent diffusion with temporal attention is not a novel architecture.
@@ -29,9 +36,9 @@ We would like to clarify the context of Table 3 and address the concern about pu
 
 Table 3 is intended to evaluate the generation quality of Genex by comparing it to other novel view synthesis methods. In this experiment, we place an object in the scene, use Genex to simulate forward movement, and evaluate the generated observation of this object from a new perspective (e.g., generating a high-quality back view given a front view). This process is an essential aspect of creating a coherent and realistic generated world. All the compared models are specifically designed and trained for cyclic or rotational novel view generation. This experiment does not involve views captured from a vehicle’s perspective. Could you elaborate on what makes this comparison "unfair"? We would be glad to provide additional clarification or further details regarding any concerns about this comparison.
 
-Second, one of the main motivations for using a panorama-based representation is its capacity for pure rotation, which significantly facilitates world exploration. While real-world vehicle dynamics do not allow for pure rotation, Genex’s effectiveness is highlighted by its ability to overcome this limitation with unlimited rotation and navigation. This enables agents to fully observe their surroundings, supporting more robust decision-making.
+In addition, one of the main motivations for using a panorama-based representation is its capacity for pure rotation, which significantly facilitates world exploration. While real-world vehicle dynamics do not allow for pure rotation, Genex’s effectiveness is highlighted by its ability to overcome this limitation with unlimited rotation and navigation. This enables agents to fully observe their surroundings, supporting more robust decision-making.
 
-Finally, our work is not limited to navigation from the perspective of a vehicle. Genex is designed for various embodied scenarios, enabling imaginative exploration from the observation of a person, a car, or any other agent.
+Finally, our work is not limited to navigation from the perspective of a vehicle. Genex is capable for almost all embodied scenarios, enabling imaginative exploration from the observation of a person, a car, or any other agent.
 
 
 
@@ -42,14 +49,21 @@ Finally, our work is not limited to navigation from the perspective of a vehicle
 
 In our experiments, the policy model is used as is, without any fine-tuning.
 
-
-> The space of 'state' & 'belief' is not clearly defined.
-
-The space of
-
-
 > It is unclear whether the diffusion model has been overfitted to the dataset, potentially making it inadequate for handling complex real-world interactions.
 
 We have conducted extensive experiments to evaluate the generalizability of Genex. The numerical results are presented in Section 5.2 (Table 2), and the visual demonstrations are included in Appendix A.7 (Figure 18). Our results indicate that Genex, trained on synthetic data, demonstrates robust zero-shot generalizability to real-world scenarios. Specifically, the model trained on synthetic data performs well on scenes such as indoor behavior vision suites, outdoor Google Maps Street View in real-world settings, and other synthetic scenes that all differ significantly from the training distribution, without requiring additional fine-tuning.
 
+
+> The space of 'state' & 'belief' is not clearly defined.
+The state is the environment the agent is currently situated in, and the space is the entire world. As described in Equation (4), we remove the transition of states, simplifying the definition. At the beginning, the state is represented as a 3D environment used to sample the initial observation.
+The belief operates at a higher level and pertains to the LLM's internal reasoning. Through continuous prompts in multi-hop conversations, the language model continually revises its belief about the world. These beliefs are encoded within the model's internal parameters, evolving as new observations and prompts are processed. Additionally, if we ask the agent to explicitly state its belief, the space would be represented in natural language.
+
+
 > The entire framework appears to have little connection with POMDP.
+
+While our framework does not strictly adhere to the traditional POMDP formalism, it fundamentally builds upon its core principles. Specifically, the state in our framework corresponds to the agent's environment, while the belief represents the agent’s internal reasoning and its evolving understanding of the world based on observations. Unlike standard POMDPs, which require physical exploration of the environment to update beliefs and gather new information, we replace that component with Genex. By enabling mental simulation and navigation, Genex streamlines the belief-updating process, significantly reducing the time and resource demands of physical exploration. This abstraction integrates reasoning and decision-making within complex, unstructured environments, fully leveraging and extending the foundational ideas of POMDPs.
+
+
+
+
+If this does not fully address your concerns, we would appreciate further elaborations.
